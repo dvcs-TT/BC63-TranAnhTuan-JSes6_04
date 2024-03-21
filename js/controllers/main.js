@@ -1,3 +1,10 @@
+import { Employee } from "../models/Employee.js";
+import { Student } from "../models/Student.js";
+import { Customer } from "../models/Customer.js";
+
+import { PersonMgmt} from "../services/PersonMgmt.js";
+import { Validation } from "../services/Validation.js";
+
 // intialize person management object from class
 let personMgmt = new PersonMgmt();
 // intialize validation object from class
@@ -35,6 +42,33 @@ const headerObj = {
     "Invoice value",
     "Rating",
   ],
+};
+
+// sort by a certain property of an person object
+const sortByObjProp = (objProp, navPillObj) => {
+  let promise = personMgmt.fetchPersonList();
+  promise
+    .then((result) => {
+      let tabPaneArray = result.data;
+      tabPaneArray.sort((a, b) => {
+        const propA = a[objProp].toUpperCase(); // ignore upper and lowercase
+        const propB = b[objProp].toUpperCase(); // ignore upper and lowercase
+        if (propA < propB) {
+          return -1;
+        }
+        if (propA > propB) {
+          return 1;
+        }
+
+        // props must be equal
+        return 0;
+      });
+      renderNavPills(navPillObj);
+      renderTabContent(navPillObj, tabPaneArray);
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+    });
 };
 
 const renderNavPills = (navPillObj) => {
@@ -103,10 +137,10 @@ const renderTabContent = (navPillObj, tabPaneArray) => {
                   .map(([key, val]) => `<td>${val}</td>`)
                   .join("")}
                 <td>
-                  <button class="btn btn-danger" onclick="deleteSV('${
+                  <button class="btn btn-danger" onclick="deletePerson('${
                     value.account
-                  }')">Delete</button>
-                  <button class="btn btn-success ms-3" data-toggle="modal" data-target="#myModal" onclick="editSV('${
+                  }, ${navPillObj}')">Delete</button>
+                  <button class="btn btn-success ms-3" data-toggle="modal" data-target="#myModal" onclick="editPerson('${
                     value.account
                   }')">Edit</button>
                 </td>
@@ -144,7 +178,7 @@ fetchUserList(headerObj);
 
 const getPersonInfo = () => {
   const inputNodeList = document.querySelectorAll(
-    "#foodForm input, #foodForm select"
+    "#formNS input, #formNS select"
   );
 
   let data = {};
@@ -156,7 +190,7 @@ const getPersonInfo = () => {
   });
 
   if (data.type === "employee") {
-    const employee = new Employee(
+    const person = new Employee(
       data.account,
       data.type,
       data.fullName,
@@ -165,9 +199,8 @@ const getPersonInfo = () => {
       data.workingDays,
       data.dailyWage
     );
-    return employee;
   } else if (data.type === "student") {
-    const student = new Student(
+    const person = new Student(
       data.account,
       data.type,
       data.fullName,
@@ -177,9 +210,8 @@ const getPersonInfo = () => {
       data.physics,
       data.chemistry
     );
-    return student;
   } else if (data.type === "customer") {
-    const employee = new Employee(
+    const person = new Customer(
       data.account,
       data.type,
       data.fullName,
@@ -189,27 +221,97 @@ const getPersonInfo = () => {
       data.invoiceValue,
       data.rating
     );
-    return employee;
   }
+  return person;
 };
 
 const addPerson = (navPillObj) => {
   const person = getPersonInfo();
 
-  if (person.type === employee) {
-    const promise = services.addPerson({
+  if (person.type === "employee") {
+    const promise = personMgmt.addPerson({
       ...person,
 
       salary: person.calcSalary(),
     });
-  } else if (person.type === student) {
-    const promise = services.addPerson({
+  } else if (person.type === "student") {
+    const promise = personMgmt.addPerson({
       ...person,
 
       gpa: person.calcGpa(),
     });
-  } else if (person.type === customer) {
-    const promise = services.addPerson({
+  } else if (person.type === "customer") {
+    const promise = personMgmt.addPerson({
+      ...person,
+    });
+  }
+
+  promise
+    .then((result) => {
+      let tabPaneArray = result.data;
+      renderNavPills(navPillObj);
+      renderTabContent(navPillObj, tabPaneArray);
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+    });
+};
+
+window.editPerson = (personAccount) => {
+  // Add an attribute to button object
+  document.querySelector("#btnCapNhat").setAttribute("data-id", personAccount);
+  // document.getElementById("btnCapNhat").setAttribute("data-id", personAccount);
+
+  const promise = personMgmt.fetchPerson(personAccount);
+  promise
+    .then((result) => {
+      // Destructure to extract result.data
+      const { data } = result;
+
+      // Display person info to the form
+      document.querySelector("#account").value = data.account;
+      document.querySelector("#type").value = data.type;
+      document.querySelector("#fullName").value = data.fullName;
+      document.querySelector("#email").value = data.email;
+      document.querySelector("#address").value = data.address;
+      if (data.type === "employee") {
+        document.querySelector("#workingDays").value = data.workingDays;
+        document.querySelector("#dailyWage").value = data.dailyWage;
+      } else if (data.type === "student") {
+        document.querySelector("#math").value = data.math;
+        document.querySelector("#physics").value = data.physics;
+        document.querySelector("#chemistry").value = data.chemistry;
+      } else if (data.type === "customer") {
+        document.querySelector("#company").value = data.company;
+        document.querySelector("#invoiceValue").value = data.invoiceValue;
+        document.querySelector("#rating").value = data.rating;
+      }
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+    });
+};
+
+const updatePerson = () => {
+  const person = getPersonInfo();
+  // const personAccount = document.getElementById("btnCapNhat").getAttribute("data-id");
+  const personAccount = document
+    .querySelector("#btnCapNhat")
+    .getAttribute("data-id");
+  console.log("personAccount: ", personAccount);
+
+  if (person.type === "employee") {
+    const promise = personMgmt.updatePerson(personAccount, {
+      ...person,
+      salary: person.calcSalary(),
+    });
+  } else if (person.type === "student") {
+    const promise = personMgmt.updatePerson(personAccount, {
+      ...person,
+      gpa: person.calcGpa(),
+    });
+  } else if (person.type === "customer") {
+    const promise = personMgmt.updatePerson(personAccount, {
       ...person,
     });
   }
@@ -226,38 +328,11 @@ const addPerson = (navPillObj) => {
 };
 
 window.deletePerson = (personAccount, navPillObj) => {
-  const promise = services.deletePerson(personAccount);
+  const promise = personMgmt.deletePerson(personAccount);
 
   promise
     .then((result) => {
       let tabPaneArray = result.data;
-      renderNavPills(navPillObj);
-      renderTabContent(navPillObj, tabPaneArray);
-    })
-    .catch((error) => {
-      console.log("error: ", error);
-    });
-};
-
-// sort by a certain property of an person object
-let sortByObjProp = (objProp, navPillObj) => {
-  let promise = personMgmt.fetchPersonList();
-  promise
-    .then((result) => {
-      let tabPaneArray = result.data;
-      tabPaneArray.sort((a, b) => {
-        const propA = a[objProp].toUpperCase(); // ignore upper and lowercase
-        const propB = b[objProp].toUpperCase(); // ignore upper and lowercase
-        if (propA < propB) {
-          return -1;
-        }
-        if (propA > propB) {
-          return 1;
-        }
-
-        // props must be equal
-        return 0;
-      });
       renderNavPills(navPillObj);
       renderTabContent(navPillObj, tabPaneArray);
     })

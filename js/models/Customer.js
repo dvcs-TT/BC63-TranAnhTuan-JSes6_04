@@ -1,4 +1,6 @@
-class Customer {
+import { Person } from "./Person.js";
+
+export class Customer extends Person {
   constructor(
     account,
     type,

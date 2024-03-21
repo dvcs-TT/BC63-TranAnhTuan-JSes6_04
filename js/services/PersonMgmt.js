@@ -1,4 +1,4 @@
-class PersonMgmt {
+export class PersonMgmt {
   constructor() {}
 
   baseUrl = "https://65ba5565b4d53c066552a4af.mockapi.io/api/personnel";
