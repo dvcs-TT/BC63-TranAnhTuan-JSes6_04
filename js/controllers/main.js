@@ -151,7 +151,7 @@ const getPersonInfo = () => {
   inputNodeList.forEach((inputNode) => {
     const { name, value } = inputNode;
 
-    // dynamic key
+    // Add a new property (a pair of name:value) to the empty object 'data'
     data[name] = value;
   });
 
@@ -191,6 +191,38 @@ const getPersonInfo = () => {
     );
     return employee;
   }
+};
+
+const addPerson = (navPillObj) => {
+  const person = getPersonInfo();
+
+  if (person.type === employee) {
+    const promise = services.addPerson({
+      ...person,
+
+      salary: person.calcSalary(),
+    });
+  } else if (person.type === student) {
+    const promise = services.addPerson({
+      ...person,
+
+      gpa: person.calcGpa(),
+    });
+  } else if (person.type === customer) {
+    const promise = services.addPerson({
+      ...person,
+    });
+  }
+
+  promise
+    .then((result) => {
+      let tabPaneArray = result.data;
+      renderNavPills(navPillObj);
+      renderTabContent(navPillObj, tabPaneArray);
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+    });
 };
 
 window.deletePerson = (personAccount, navPillObj) => {

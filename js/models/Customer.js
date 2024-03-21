@@ -1,4 +1,4 @@
-export class Customer {
+class Customer {
   constructor(
     account,
     type,
