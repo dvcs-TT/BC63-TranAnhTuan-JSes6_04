@@ -129,11 +129,11 @@ const renderTabContent = (navPillObj, tabPaneArray) => {
 const fetchUserList = (navPillObj) => {
   renderNavPills(navPillObj);
 
-  let promise = personMgmt.fetchDataList();
+  let promise = personMgmt.fetchPersonList();
   promise
     .then((result) => {
       let tabPaneArray = result.data;
-      renderTabContent(headerObj, tabPaneArray);
+      renderTabContent(navPillObj, tabPaneArray);
     })
     .catch((error) => {
       console.log("error: ", error);
@@ -142,9 +142,74 @@ const fetchUserList = (navPillObj) => {
 
 fetchUserList(headerObj);
 
+const getPersonInfo = () => {
+  const inputNodeList = document.querySelectorAll(
+    "#foodForm input, #foodForm select"
+  );
+
+  let data = {};
+  inputNodeList.forEach((inputNode) => {
+    const { name, value } = inputNode;
+
+    // dynamic key
+    data[name] = value;
+  });
+
+  if (data.type === "employee") {
+    const employee = new Employee(
+      data.account,
+      data.type,
+      data.fullName,
+      data.email,
+      data.address,
+      data.workingDays,
+      data.dailyWage
+    );
+    return employee;
+  } else if (data.type === "student") {
+    const student = new Student(
+      data.account,
+      data.type,
+      data.fullName,
+      data.email,
+      data.address,
+      data.math,
+      data.physics,
+      data.chemistry
+    );
+    return student;
+  } else if (data.type === "customer") {
+    const employee = new Employee(
+      data.account,
+      data.type,
+      data.fullName,
+      data.email,
+      data.address,
+      data.company,
+      data.invoiceValue,
+      data.rating
+    );
+    return employee;
+  }
+};
+
+window.deletePerson = (personAccount, navPillObj) => {
+  const promise = services.deletePerson(personAccount);
+
+  promise
+    .then((result) => {
+      let tabPaneArray = result.data;
+      renderNavPills(navPillObj);
+      renderTabContent(navPillObj, tabPaneArray);
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+    });
+};
+
 // sort by a certain property of an person object
 let sortByObjProp = (objProp, navPillObj) => {
-  let promise = personMgmt.fetchDataList();
+  let promise = personMgmt.fetchPersonList();
   promise
     .then((result) => {
       let tabPaneArray = result.data;
@@ -168,4 +233,3 @@ let sortByObjProp = (objProp, navPillObj) => {
       console.log("error: ", error);
     });
 };
-

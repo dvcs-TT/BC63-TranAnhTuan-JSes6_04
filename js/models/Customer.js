@@ -1,14 +1,15 @@
 export class Customer {
   constructor(
     account,
+    type,
     fullName,
-    eMail,
+    email,
     address,
     company,
     invoiceValue,
     rating
   ) {
-    super(account, fullName, eMail, address);
+    super(account, type, fullName, email, address);
     this.company = company;
     this.invoiceValue = invoiceValue;
     this.rating = rating;

@@ -1,6 +1,6 @@
-export class Student {
-  constructor(account, fullName, eMail, address, math, physics, chemistry) {
-    super(account, fullName, eMail, address);
+class Student {
+  constructor(account, type, fullName, email, address, math, physics, chemistry) {
+    super(account, type, fullName, email, address);
     this.math = math;
     this.physics = physics;
     this.chemistry = chemistry;

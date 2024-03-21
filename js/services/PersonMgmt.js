@@ -4,7 +4,7 @@ class PersonMgmt {
   baseUrl = "https://65ba5565b4d53c066552a4af.mockapi.io/api/personnel";
 
   // Fetch the list of all user details (employees / students / customers)
-  fetchDataList = () => {
+  fetchPersonList = () => {
     return axios({
       url: this.baseUrl,
       method: "GET",
@@ -12,7 +12,7 @@ class PersonMgmt {
   };
 
   // Remove a user from the list
-  deleteDatum = (userId) => {
+  deletePerson = (userId) => {
     return axios({
       url: `${this.baseUrl}/${userId}`,
       method: "DELETE",
@@ -20,7 +20,7 @@ class PersonMgmt {
   };
 
   // Add a user to the list
-  addDatum = (payload) => {
+  addPerson = (payload) => {
     return axios({
       url: this.baseUrl,
       method: "POST",
@@ -29,7 +29,7 @@ class PersonMgmt {
   };
 
   // Fetch details of 1 user (employee / student / customer)
-  fetchDatum = (userId) => {
+  fetchPerson = (userId) => {
     return axios({
       url: `${this.baseUrl}/${userId}`,
       method: "GET",
@@ -37,7 +37,7 @@ class PersonMgmt {
   };
 
   // Update details of 1 user
-  updateDatum = (userId, payload) => {
+  updatePerson = (userId, payload) => {
     return axios({
       url: `${this.baseUrl}/${userId}`,
       method: "PUT",
