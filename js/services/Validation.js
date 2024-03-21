@@ -1,4 +1,4 @@
-export class Validation {
+class Validation {
   constructor() {}
 
   isEmpty(value, elementErrorId, messageError) {

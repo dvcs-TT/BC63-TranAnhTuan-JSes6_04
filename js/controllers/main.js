@@ -1,25 +1,48 @@
-// intialize personMgmt object from class
 // let person = new Person();
 // let student = new Student();
 // let customer = new Customer();
+// intialize person management object from class
 let personMgmt = new PersonMgmt();
-// let validation = new Validation();
+// intialize validation object from class
+let validation = new Validation();
 
-let typeArray = ["employee", "student", "customer"];
+const headerObj = {
+  employee: [
+    "Account",
+    "Type",
+    "Full name",
+    "E-mail",
+    "Address",
+    "Working days",
+    "Daily wage",
+    "Salary",
+  ],
+  student: [
+    "Account",
+    "Type",
+    "Full name",
+    "E-mail",
+    "Address",
+    "Math",
+    "Physics",
+    "Chemistry",
+    "GPA",
+  ],
+  customer: [
+    "Account",
+    "Type",
+    "Full name",
+    "E-mail",
+    "Address",
+    "Company",
+    "Invoice value",
+    "Rating",
+  ],
+};
 
-// const fetchUserList = () => {
-//   let promise = personMgmt.fetchDataList();
-//   promise
-//     .then((result) => {
-//       renderTabContent(result.data);
-//     })
-//     .catch((error) => {
-//       console.log("error: ", error);
-//     });
-// };
-
-const renderNavPills = (navPillArray) => {
-  document.querySelector("#pills-tab").innerHTML = navPillArray.reduce(
+const renderNavPills = (navPillObj) => {
+  const typeArray = Object.keys(navPillObj);
+  document.querySelector("#pills-tab").innerHTML = typeArray.reduce(
     (acc, value, index) => {
       return (
         acc +
@@ -46,21 +69,24 @@ const renderNavPills = (navPillArray) => {
   );
 };
 
-const renderTabContent = (navPillArray) => {
-  renderNavPills(navPillArray);
-
+const renderTabContent = (navPillObj) => {
+  renderNavPills(navPillObj);
+  
+  const typeArray = Object.keys(navPillObj);
+  
   let promise = personMgmt.fetchDataList();
   promise
     .then((result) => {
       let tabPaneArray = result.data;
 
-      document.querySelector("#pills-tabContent").innerHTML = tabPaneArray.reduce(
-        (acc, value, index) => {
-          const currentType = navPillArray.find(
-            (type, i) => index % navPillArray.length === i
+      document.querySelector("#pills-tabContent").innerHTML =
+        tabPaneArray.reduce((acc, value, index) => {
+          const currentType = typeArray.find(
+            (type, i) => index % typeArray.length === i
           );
 
           if (currentType) {
+            const headers = navPillObj[currentType];
             return (
               acc +
               `
@@ -75,11 +101,11 @@ const renderTabContent = (navPillArray) => {
                 <table>
                 <tbody>
                 <tr>
-                ${Object.keys(value)
-                  .map((property) => `<th>${property}</th>`)
-                  .join("")}
-                  <th>Actions</th>
-                </tr>
+                      ${headers
+                        .map((header) => `<th>${header}</th>`)
+                        .join("")}
+                      <th>Actions</th>
+                    </tr>
                 ${tabPaneArray
                   .filter((value) => value.type === currentType)
                   .reduce(
@@ -108,13 +134,11 @@ const renderTabContent = (navPillArray) => {
             );
           }
           return acc;
-        },
-        ""
-      );
+        }, "");
     })
     .catch((error) => {
       console.log("error: ", error);
     });
 };
 
-renderTabContent(typeArray);
+renderTabContent(headerObj);
