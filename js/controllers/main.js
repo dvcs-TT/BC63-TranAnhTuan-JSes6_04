@@ -1,6 +1,3 @@
-// let person = new Person();
-// let student = new Student();
-// let customer = new Customer();
 // intialize person management object from class
 let personMgmt = new PersonMgmt();
 // intialize validation object from class
@@ -69,76 +66,106 @@ const renderNavPills = (navPillObj) => {
   );
 };
 
-const renderTabContent = (navPillObj) => {
-  renderNavPills(navPillObj);
-  
+const renderTabContent = (navPillObj, tabPaneArray) => {
   const typeArray = Object.keys(navPillObj);
-  
+  document.querySelector("#pills-tabContent").innerHTML = tabPaneArray.reduce(
+    (acc, value, index) => {
+      const currentType = typeArray.find(
+        (type, i) => index % typeArray.length === i
+      );
+
+      if (currentType) {
+        const headers = navPillObj[currentType];
+        return (
+          acc +
+          `
+      <div
+      class="tab-pane fade ${!index ? "show active" : ""}"
+      id="pills-${currentType}"
+      role="tabpanel"
+      aria-labelledby="pills-${currentType}-tab"
+      tabindex="0"
+      >
+        <div id="tabContent_${currentType}">
+        <table>
+        <tbody>
+        <tr>
+              ${headers.map((header) => `<th>${header}</th>`).join("")}
+              <th>Actions</th>
+            </tr>
+        ${tabPaneArray
+          .filter((value) => value.type === currentType)
+          .reduce(
+            (acc, value) =>
+              acc +
+              `<tr>
+                ${Object.entries(value)
+                  .map(([key, val]) => `<td>${val}</td>`)
+                  .join("")}
+                <td>
+                  <button class="btn btn-danger" onclick="deleteSV('${
+                    value.account
+                  }')">Delete</button>
+                  <button class="btn btn-success ms-3" data-toggle="modal" data-target="#myModal" onclick="editSV('${
+                    value.account
+                  }')">Edit</button>
+                </td>
+              </tr>`,
+            ""
+          )}
+        </tbody>
+        </table>
+        </div>
+      </div>            
+        `
+        );
+      }
+      return acc;
+    },
+    ""
+  );
+};
+
+const fetchUserList = (navPillObj) => {
+  renderNavPills(navPillObj);
+
   let promise = personMgmt.fetchDataList();
   promise
     .then((result) => {
       let tabPaneArray = result.data;
-
-      document.querySelector("#pills-tabContent").innerHTML =
-        tabPaneArray.reduce((acc, value, index) => {
-          const currentType = typeArray.find(
-            (type, i) => index % typeArray.length === i
-          );
-
-          if (currentType) {
-            const headers = navPillObj[currentType];
-            return (
-              acc +
-              `
-              <div
-              class="tab-pane fade ${!index ? "show active" : ""}"
-              id="pills-${currentType}"
-              role="tabpanel"
-              aria-labelledby="pills-${currentType}-tab"
-              tabindex="0"
-              >
-                <div id="tabContent_${currentType}">
-                <table>
-                <tbody>
-                <tr>
-                      ${headers
-                        .map((header) => `<th>${header}</th>`)
-                        .join("")}
-                      <th>Actions</th>
-                    </tr>
-                ${tabPaneArray
-                  .filter((value) => value.type === currentType)
-                  .reduce(
-                    (acc, value) =>
-                      acc +
-                      `<tr>
-                        ${Object.entries(value)
-                          .map(([key, val]) => `<td>${val}</td>`)
-                          .join("")}
-                        <td>
-                          <button class="btn btn-danger" onclick="deleteSV('${
-                            value.account
-                          }')">Delete</button>
-                          <button class="btn btn-success ms-3" data-toggle="modal" data-target="#myModal" onclick="editSV('${
-                            value.account
-                          }')">Edit</button>
-                        </td>
-                      </tr>`,
-                    ""
-                  )}
-                </tbody>
-                </table>
-                </div>
-              </div>            
-                `
-            );
-          }
-          return acc;
-        }, "");
+      renderTabContent(headerObj, tabPaneArray);
     })
     .catch((error) => {
       console.log("error: ", error);
     });
 };
 
-renderTabContent(headerObj);
+fetchUserList(headerObj);
+
+// sort by a certain property of an person object
+let sortByObjProp = (objProp, navPillObj) => {
+  let promise = personMgmt.fetchDataList();
+  promise
+    .then((result) => {
+      let tabPaneArray = result.data;
+      tabPaneArray.sort((a, b) => {
+        const propA = a[objProp].toUpperCase(); // ignore upper and lowercase
+        const propB = b[objProp].toUpperCase(); // ignore upper and lowercase
+        if (propA < propB) {
+          return -1;
+        }
+        if (propA > propB) {
+          return 1;
+        }
+
+        // props must be equal
+        return 0;
+      });
+      renderNavPills(navPillObj);
+      renderTabContent(navPillObj, tabPaneArray);
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+    });
+};
+

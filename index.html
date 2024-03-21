@@ -132,22 +132,15 @@
 
             <!-- Body -->
             <div class="card-body">
-              <div class="row mb-3">
-                <div class="col">
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="category"
-                      id="searchName"
-                    />
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="btnTimNV"
-                        ><i class="fa fa-search"></i
-                      ></span>
-                    </div>
-                  </div>
-                </div>
+              <div class="col">
+                <span>
+                  Sort by Account
+                  <button onclick="sortByObjProp('account', headerObj)"><i class="fa fa-arrow-down"></i></button>
+                </span>
+                <span>
+                  Sort by Name
+                  <button onclick="sortByObjProp('fullName', headerObj)"><i class="fa fa-arrow-down"></i></button>
+                </span>
               </div>
               <div>
                 <!-- navigation pills -->
@@ -414,7 +407,7 @@
       referrerpolicy="no-referrer"
     ></script>
 
-    <script src="./js/models/Person.js"></script>    
+    <script src="./js/models/Person.js"></script>
     <script src="./js/models/Employee.js"></script>
     <script src="./js/models/Student.js"></script>
     <script src="js/models/Customer.js"></script>

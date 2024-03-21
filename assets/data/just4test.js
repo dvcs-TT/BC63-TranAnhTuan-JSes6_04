@@ -4,24 +4,6 @@
 // isMatch		kiemTraTrung
 // isMatchAccount	kiemTrMaSVTrung
 
-typeArray[i] === "employee" ? (<thead id="customers" class="text-primary">
-<tr>
-  <th class="nowrap">
-    <span class="mr-1">Account</span>
-    <i class="fa fa-arrow-up" id="SapXepTang"></i>
-    <i class="fa fa-arrow-down" id="SapXepGiam"></i>
-  </th>
-  <th>Full name</th>
-  <th>E-mail</th>
-  <th>Address</th>
-  <th>Company</th>
-  <th>Invoice value</th>
-  <th>Rating</th>
-  <th></th>
-  <th><em class="fa fa-cog"></em></th>
-</tr>
-</thead>) : (typeArray[i] === "student" ? "xyz" : );
-
 const data = {
   navPills: [
     { tabName: "tabEmployee", showName: "Employees", type: "employee" },
