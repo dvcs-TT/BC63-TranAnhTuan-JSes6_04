@@ -10,7 +10,7 @@ let personMgmt = new PersonMgmt();
 // intialize validation object from class
 let validation = new Validation();
 
-const headerObj = {
+window.headerObj = {
   employee: [
     "Account",
     "Type",
@@ -45,7 +45,7 @@ const headerObj = {
 };
 
 // sort by a certain property of an person object
-const sortByObjProp = (objProp, navPillObj) => {
+window.sortByObjProp = (objProp, navPillObj) => {
   let promise = personMgmt.fetchPersonList();
   promise
     .then((result) => {
