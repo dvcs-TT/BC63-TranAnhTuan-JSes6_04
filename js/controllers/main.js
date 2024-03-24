@@ -2,7 +2,7 @@ import { Employee } from "../models/Employee.js";
 import { Student } from "../models/Student.js";
 import { Customer } from "../models/Customer.js";
 
-import { PersonMgmt} from "../services/PersonMgmt.js";
+import { PersonMgmt } from "../services/PersonMgmt.js";
 import { Validation } from "../services/Validation.js";
 
 // intialize person management object from class
@@ -176,6 +176,14 @@ const fetchUserList = (navPillObj) => {
 
 fetchUserList(headerObj);
 
+const resetForm = () => {
+  document.querySelector("#formNS").reset();
+};
+
+document.querySelector("#btnThem").onclick = () => {
+  resetForm();
+};
+
 const getPersonInfo = () => {
   const inputNodeList = document.querySelectorAll(
     "#formNS input, #formNS select"
@@ -222,6 +230,9 @@ const getPersonInfo = () => {
       data.rating
     );
   }
+
+  resetForm();
+
   return person;
 };
 
@@ -258,6 +269,7 @@ const addPerson = (navPillObj) => {
 };
 
 window.editPerson = (personAccount) => {
+  resetForm();
   // Add an attribute to button object
   document.querySelector("#btnCapNhat").setAttribute("data-id", personAccount);
   // document.getElementById("btnCapNhat").setAttribute("data-id", personAccount);
@@ -277,14 +289,44 @@ window.editPerson = (personAccount) => {
       if (data.type === "employee") {
         document.querySelector("#workingDays").value = data.workingDays;
         document.querySelector("#dailyWage").value = data.dailyWage;
+
+        document.querySelector("#workingDays").disabled = false;
+        document.querySelector("#dailyWage").disabled = false;
+
+        document.querySelector("#math").disabled = true;
+        document.querySelector("#physics").disabled = true;
+        document.querySelector("#chemistry").disabled = true;
+        document.querySelector("#company").disabled = true;
+        document.querySelector("#invoiceValue").disabled = true;
+        document.querySelector("#rating").disabled = true;
       } else if (data.type === "student") {
         document.querySelector("#math").value = data.math;
         document.querySelector("#physics").value = data.physics;
         document.querySelector("#chemistry").value = data.chemistry;
+
+        document.querySelector("#math").disabled = false;
+        document.querySelector("#physics").disabled = false;
+        document.querySelector("#chemistry").disabled = false;
+
+        document.querySelector("#workingDays").disabled = true;
+        document.querySelector("#dailyWage").disabled = true;
+        document.querySelector("#company").disabled = true;
+        document.querySelector("#invoiceValue").disabled = true;
+        document.querySelector("#rating").disabled = true;
       } else if (data.type === "customer") {
         document.querySelector("#company").value = data.company;
         document.querySelector("#invoiceValue").value = data.invoiceValue;
         document.querySelector("#rating").value = data.rating;
+
+        document.querySelector("#company").disabled = false;
+        document.querySelector("#invoiceValue").disabled = false;
+        document.querySelector("#rating").disabled = false;
+
+        document.querySelector("#workingDays").disabled = true;
+        document.querySelector("#dailyWage").disabled = true;
+        document.querySelector("#math").disabled = true;
+        document.querySelector("#physics").disabled = true;
+        document.querySelector("#chemistry").disabled = true;
       }
     })
     .catch((error) => {
